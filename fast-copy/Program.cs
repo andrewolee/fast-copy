@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
 using Microsoft.Extensions.ObjectPool;
 
 string source = args?[0] ?? throw new ArgumentNullException(nameof(source));
@@ -22,7 +21,6 @@ static async Task ReadAsync(
         while (true)
         {
             Chunk chunk = objectPool.Get();
-            chunk.
         }
     }
 }
@@ -30,6 +28,4 @@ static async Task ReadAsync(
 public class Chunk
 {
     public byte[] Buffer { get; } = new byte[516 * 1024];
-    
-
 }
