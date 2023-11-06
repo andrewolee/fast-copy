@@ -61,7 +61,7 @@ static async Task WriteAsync(
 {
     while (await channelReader.WaitToReadAsync())
     {
-        if (channelReader.TryRead(out Chunk chunk))
+        if (channelReader.TryRead(out Chunk? chunk))
         {
             using (MemoryMappedViewAccessor viewAccessor = dest.CreateViewAccessor(chunk.Offset, chunk.Count))
             {
