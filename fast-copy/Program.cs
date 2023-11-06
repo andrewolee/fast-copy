@@ -1,12 +1,11 @@
-﻿using System.IO.MemoryMappedFiles;
+﻿using System.CommandLine;
+using System.IO.MemoryMappedFiles;
 using System.Threading.Channels;
 
 using Microsoft.Extensions.ObjectPool;
 
-if (args.Length < 2)
-{
-    Console.WriteLine("Usage: ");
-}
+RootCommand rootCommand = new RootCommand("Multithreaded copy of a single file.");
+
 
 string source = args?[0] ?? throw new ArgumentNullException(nameof(source));
 string dest = args?[1] ?? throw new ArgumentNullException(nameof(dest));
