@@ -29,6 +29,10 @@ static async Task ReadAsync(
             Chunk chunk = objectPool.Get();
             chunk.Offset = fileStream.Position;
             chunk.Count = await fileStream.ReadAsync(chunk.Buffer);
+            if (chunk.Count == 0){
+                channelWriter.Complete();
+                return;
+            }
             await channelWriter.WriteAsync(chunk);
         }
     }
@@ -43,7 +47,11 @@ static async Task WriteAsync(
     {
         if (channelReader.TryRead(out Chunk chunk))
         {
-
+            using (MemoryMappedViewAccessor viewAccessor = dest.CreateViewAccessor(chunk.Offset, chunk.Count))
+            {
+                viewAccessor.WriteArray(0, chunk.Buffer, 0, chunk.Count);
+                objectPool.Return(chunk);
+            }
         }
     }
 }
