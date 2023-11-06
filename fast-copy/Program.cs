@@ -1,6 +1,5 @@
 ﻿using System.IO.MemoryMappedFiles;
 using System.Threading.Channels;
-
 using Microsoft.Extensions.ObjectPool;
 
 if (args.Length < 2)
@@ -50,15 +49,16 @@ static async Task WriteAsync(
             using (MemoryMappedViewAccessor viewAccessor = dest.CreateViewAccessor(chunk.Offset, chunk.Count))
             {
                 viewAccessor.WriteArray(0, chunk.Buffer, 0, chunk.Count);
-                objectPool.Return(chunk);
             }
+
+            objectPool.Return(chunk);
         }
     }
 }
 
 internal class Chunk
 {
-    public byte[] Buffer { get; } = new byte[];
+    public byte[] Buffer { get; } = new byte[System.Environment.SystemPageSize];
 
     public int Count { get; set; }
 
