@@ -17,6 +17,21 @@ ObjectPool<Chunk> objectPool = ObjectPool.Create<Chunk>();
 Channel<Chunk> channel = Channel.CreateBounded<Chunk>(threads * 4);
 FileInfo fileInfo = new FileInfo(source);
 
+Task readTask = ReadAsync(source, channel.Writer, objectPool);
+
+Task[] writeTasks = new Task[threads];
+using (MemoryMappedFile memoryMappedFile = MemoryMappedFile.CreateFromFile(dest, FileMode.OpenOrCreate, null, fileInfo.Length))
+{
+    for (int i = 0; i < threads; i++)
+    {
+        writeTasks[i] = WriteAsync(memoryMappedFile, channel, objectPool);
+    }
+
+    await Task.WhenAll(writeTasks);
+}
+
+await readTask;
+
 static async Task ReadAsync(
     string source,
     ChannelWriter<Chunk> channelWriter,
