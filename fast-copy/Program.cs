@@ -1,5 +1,6 @@
 ﻿using System.IO.MemoryMappedFiles;
 using System.Threading.Channels;
+
 using Microsoft.Extensions.ObjectPool;
 
 if (args.Length < 2)
@@ -28,7 +29,8 @@ static async Task ReadAsync(
             Chunk chunk = objectPool.Get();
             chunk.Offset = fileStream.Position;
             chunk.Count = await fileStream.ReadAsync(chunk.Buffer);
-            if (chunk.Count == 0){
+            if (chunk.Count == 0)
+            {
                 channelWriter.Complete();
                 return;
             }
